@@ -34,10 +34,12 @@ def chunking_vectordb(documents):
 
 
 
-B_INST, E_INST = "[INST]", "[/INST]"
-B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
-SYSTEM_PROMPT = B_SYS + DEFAULT_SYSTEM_PROMPT + E_SYS
-template = B_INST + SYSTEM_PROMPT + instructions + E_INST
+template = """Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
+Chat History:
+{chat_history}
+Follow up Input: {question}
+Standalone questions: """
+
 CONDENSE_QUESTION_PROMPT = PromptTemplate(template=template, input_variables=["question"])
 
 def generate(path):
