@@ -2,10 +2,12 @@ from src.helper import DEFAULT_SYSTEM_PROMPT, instructions
 from langchain.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import  PyPDFLoader 
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from flask import Flask,request,render_template, jsonify
+
 from werkzeug.utils import secure_filename
 import warnings
 warnings.filterwarnings("ignore")
@@ -89,7 +91,13 @@ def get_answer():
                                                verbose=False)
         chat_history = []
         result=chain.invoke({"question":user_input,"chat_history":chat_history})
+        chat_history.extend(
+        [
+        HumanMessage(content= user_input),
+        AIMessage(content=result["answer"])
+        ])
         print(f"Answer:{result}")
+        
     return render_template("index.html", results= str(result['answer']))
     # return jsonify({"response": str(result['answer']) })
             
