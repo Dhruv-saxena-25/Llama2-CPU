@@ -18,6 +18,9 @@ import os
 load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN")
 embeddings = HuggingFaceInferenceAPIEmbeddings(api_key= HF_TOKEN, model_name="BAAI/bge-base-en-v1.5")
+
+chat_history =[]
+
 #Load the PDF File
 def load_file(file_path):
     loader= PyPDFLoader(file_path)
@@ -89,7 +92,7 @@ def get_answer():
         chain = ConversationalRetrievalChain.from_llm(llm= llm,retriever=store.as_retriever(search_kwargs={'k': 2}),
                                                condense_question_prompt=CONDENSE_QUESTION_PROMPT,return_source_documents=True, 
                                                verbose=False)
-        chat_history = []
+    
         result=chain.invoke({"question":user_input,"chat_history":chat_history})
         chat_history.extend(
         [
@@ -110,5 +113,4 @@ if __name__ == "__main__":
     # response = generate("data\RAGPaper.pdf")
     # query = "What is RAG-Sequence Model??"
     # print(response.invoke({"question":query,"chat_history":chat_history}))
-
 
